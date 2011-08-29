@@ -12,6 +12,7 @@ module RisParser
     rule(:lf)         { match('\n') }
     rule(:cr)         { match('\r') }
     rule(:line)       { lf | cr >> lf }
+    rule(:number)     { match('\d').repeat(1) }
 
     rule(:start_tag)  { str('TY  - ') >> match('[A-Z]').repeat.as(:contents) >> line }
     rule(:end_tag)    { str('ER  -') >> space? >> line.repeat(1) }
@@ -42,7 +43,10 @@ module RisParser
     rule(:series)       { str('SV') >> tag_marker >> contents.as(:series) }
     rule(:issue_id)     { str('IS') | str('CP') }
     rule(:issue)        { issue_id >> tag_marker >> contents.as(:issue) }
-    rule(:start_page)   { str('SP') >> tag_marker >> contents.as(:start_page) }
+    rule(:range_text)   { match['^[\-\r\n]'].repeat(1).as(:contents) }
+    rule(:page_range)   { range_text.as(:start_page) >> match['[\-\u2013\u2014\u2012]'] >> range_text.as(:end_page) }
+    rule(:pages)        { page_range | range_text.as(:start_page) }
+    rule(:start_page)   { str('SP') >> tag_marker >> pages >> line }
     rule(:end_page)     { str('EP') >> tag_marker >> contents.as(:end_page) }
     rule(:isbn)         { str('SN') >> tag_marker >> contents.as(:isbn) }
     rule(:city)         { str('CY') >> tag_marker >> contents.as(:city) }
@@ -78,7 +82,6 @@ module RisParser
     rule(:tag)        { tag_id >> tag_marker }
     rule(:free_text)  { match['^[\n\r]'].repeat(0) }
     rule(:content)    { tag.absent? >> free_text >> line }
-#                        match['0-9A-Za-z ,\.\?\!\\\|\/\;\:\-_\(\)–\'\&\=\[\]\<\>ü%\"#@'].repeat(1) >> line }
 
     rule(:contents)   { content.repeat(1).as(:contents) }
     rule(:titles)     { title | second_title | title_series | series_title }

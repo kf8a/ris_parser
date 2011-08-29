@@ -22,7 +22,7 @@ AU  - Robertson, G. P.
 KW  - GLBRC T4; LTER pub
 L1  - internal-pdf://Zenone et al 2011 GCBB-0122663789/Zenone et al 2011 GCBB.pdf
 PY  - 2011
-SP  - DOI: 10.1111/j.1757-1707.2011.01098.x
+DO  - DOI: 10.1111/j.1757-1707.2011.01098.x
 ST  - CO2 fluxes of transitional bioenergy crops: effect of land conversion during the first year of cultivation
 T2  - Global Change Biology-Bioenergy
 TI  - CO2 fluxes of transitional bioenergy crops: effect of land conversion during the first year of cultivation
@@ -140,7 +140,7 @@ HERE
     first_record[:keyword].should == "GLBRC T4; LTER pub"
     first_record[:pdf].should == "internal-pdf://Zenone et al 2011 GCBB-0122663789/Zenone et al 2011 GCBB.pdf"
     first_record[:pub_year].should == "2011"
-    first_record[:start_page].should == "DOI: 10.1111/j.1757-1707.2011.01098.x"
+    first_record[:doi].should == "DOI: 10.1111/j.1757-1707.2011.01098.x"
     first_record[:series_title].should == "CO2 fluxes of transitional bioenergy crops: effect of land conversion during the first year of cultivation"
     first_record[:secondary_title].should == "Global Change Biology-Bioenergy"
     first_record[:title].should == "CO2 fluxes of transitional bioenergy crops: effect of land conversion during the first year of cultivation"
@@ -153,7 +153,8 @@ HERE
     second_record[:keyword].should == "LTER pub"
     second_record[:pdf].should == "internal-pdf://Syswerda etal. 2011-2756515844/Syswerda etal. 2011.pdf"
     second_record[:pub_year].should == "2011"
-    second_record[:start_page].should == "92-101"
+    second_record[:start_page].should == "92"
+ #   second_record[:end_page].should == "101"
     second_record[:series_title].should == "Agricultural management and soil carbon storage in surface vs. deep layers"
     second_record[:secondary_title].should == "Soil Science Society of America Journal"
     second_record[:title].should == "Agricultural management and soil carbon storage in surface vs. deep layers"
@@ -162,11 +163,6 @@ HERE
   end
 
   it "should be able to deal with an actual file" do
-    result = trans.apply(parser.parse('@import spec/endnote/LTER_pubs.txt'))
-    result.count.should == 930
-  end
-
-  it "should be able to deal with a second file" do
     parsed_output = parser.parse('@import spec/endnote/LTER.txt')
     result = trans.apply(parsed_output)
     result.count.should == 977
