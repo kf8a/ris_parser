@@ -1,0 +1,4 @@
+= A Refman RIS file parser
+
+This is based on http://www.refman.com/support/risformat_intro.asp and some experimentation with the
+ris format that endnote spits out.
