@@ -11,11 +11,6 @@ describe 'ris parser' do
     parser.line.should parse("\r\n")
   end
 
-  it 'should parse numbers' do
-    parser.number.should parse('48')
-    parser.number.should_not parse('fourtyeight')
-  end
-
   it 'should parse the start tag' do
     parser.start_tag.should parse("TY  - JOUR\n").as({:contents=>"JOUR"})
     parser.start_tag.should parse("TY  - JOUR\r\n").as({:contents=>"JOUR"})
@@ -102,8 +97,7 @@ AU  - Robertson, G. P.
 KW  - GLBRC T4; LTER pub
 L1  - internal-pdf://Zenone et al 2011 GCBB-0122663789/Zenone et al 2011 GCBB.pdf
 PY  - 2011
-SP  - 25
-DO  - DOI: 10.1111/j.1757-1707.2011.01098.x
+SP  - DOI: 10.1111/j.1757-1707.2011.01098.x
 ST  - CO2 fluxes of transitional bioenergy crops: effect of land conversion during the first year of cultivation
 T2  - Global Change Biology-Bioenergy
 TI  - CO2 fluxes of transitional bioenergy crops: effect of land conversion during the first year of cultivation
@@ -126,12 +120,11 @@ HERE
     first_stanza[10][:keyword][:contents].should == "GLBRC T4; LTER pub\n"
     first_stanza[11][:pdf][:contents].should == "internal-pdf://Zenone et al 2011 GCBB-0122663789/Zenone et al 2011 GCBB.pdf\n"
     first_stanza[12][:pub_year][:contents].should == "2011\n"
-    first_stanza[13][:start_page][:contents].should == "25"
-    first_stanza[14][:doi][:contents].should == "DOI: 10.1111/j.1757-1707.2011.01098.x\n"
-    first_stanza[15][:series_title][:contents].should == "CO2 fluxes of transitional bioenergy crops: effect of land conversion during the first year of cultivation\n"
-    first_stanza[16][:secondary_title][:contents].should == "Global Change Biology-Bioenergy\n"
-    first_stanza[17][:title][:contents].should == "CO2 fluxes of transitional bioenergy crops: effect of land conversion during the first year of cultivation\n"
-    first_stanza[18][:local_id][:contents].should == "930\n"
+    first_stanza[13][:start_page][:contents].should == "DOI: 10.1111/j.1757-1707.2011.01098.x\n"
+    first_stanza[14][:series_title][:contents].should == "CO2 fluxes of transitional bioenergy crops: effect of land conversion during the first year of cultivation\n"
+    first_stanza[15][:secondary_title][:contents].should == "Global Change Biology-Bioenergy\n"
+    first_stanza[16][:title][:contents].should == "CO2 fluxes of transitional bioenergy crops: effect of land conversion during the first year of cultivation\n"
+    first_stanza[17][:local_id][:contents].should == "930\n"
   end
 
   it 'should parse multiple ris stanzas' do
@@ -149,7 +142,7 @@ AU  - Robertson, G. P.
 KW  - GLBRC T4; LTER pub
 L1  - internal-pdf://Zenone et al 2011 GCBB-0122663789/Zenone et al 2011 GCBB.pdf
 PY  - 2011
-SP  - 25
+SP  - DOI: 10.1111/j.1757-1707.2011.01098.x
 ST  - CO2 fluxes of transitional bioenergy crops: effect of land conversion during the first year of cultivation
 T2  - Global Change Biology-Bioenergy
 TI  - CO2 fluxes of transitional bioenergy crops: effect of land conversion during the first year of cultivation
@@ -191,7 +184,7 @@ HERE
     first_stanza[10][:keyword][:contents].should == "GLBRC T4; LTER pub\n"
     first_stanza[11][:pdf][:contents].should == "internal-pdf://Zenone et al 2011 GCBB-0122663789/Zenone et al 2011 GCBB.pdf\n"
     first_stanza[12][:pub_year][:contents].should == "2011\n"
-    first_stanza[13][:start_page][:contents].should == "25"
+    first_stanza[13][:start_page][:contents].should == "DOI: 10.1111/j.1757-1707.2011.01098.x\n"
     first_stanza[14][:series_title][:contents].should == "CO2 fluxes of transitional bioenergy crops: effect of land conversion during the first year of cultivation\n"
     first_stanza[15][:secondary_title][:contents].should == "Global Change Biology-Bioenergy\n"
     first_stanza[16][:title][:contents].should == "CO2 fluxes of transitional bioenergy crops: effect of land conversion during the first year of cultivation\n"
@@ -208,8 +201,7 @@ HERE
     second_stanza[7][:keyword][:contents].should == "LTER pub\n"
     second_stanza[8][:pdf][:contents].should == "internal-pdf://Syswerda etal. 2011-2756515844/Syswerda etal. 2011.pdf\n"
     second_stanza[9][:pub_year][:contents].should == "2011\n"
-    second_stanza[10][:start_page][:contents].should == "92"
-    second_stanza[10][:end_page][:contents].should   == "101"
+    second_stanza[10][:start_page][:contents].should == "92-101\n"
     second_stanza[11][:series_title][:contents].should == "Agricultural management and soil carbon storage in surface vs. deep layers\n"
     second_stanza[12][:secondary_title][:contents].should == "Soil Science Society of America Journal\n"
     second_stanza[13][:title][:contents].should == "Agricultural management and soil carbon storage in surface vs. deep layers\n"
@@ -237,24 +229,9 @@ HERE
     parser.record.should parse(text_to_parse).as({:series_title=>{:contents=>"Non-linear nitrous oxide (N2O) response to nitrogen fertilizer in on-farm corn crops of the us midwest\n"}})
   end
 
-  it 'should parse range text' do
-    parser.range_text.should parse('123d')
-    parser.range_text.should_not parse('23-43')
-  end
-
-  it 'should be able to parse page_ranges with regular dash' do
-    parser.page_range.should parse('45-74')       #regular dash
-  end
-
-  it 'should be able to handle page ranges in the start page tag' do
-    text_to_parse = "SP  - 1140-1152\n"
-    parser.record.should parse(text_to_parse).as({:start_page=>{:contents=>'1140'},:end_page=>{:contents=>'1152'}})
-  end
-
-  #TODO this should be changed to handle em en and other dashes
-  it 'should put page ranges with foreign dashes into the start page field' do
+  it 'should be able to handle non-ascii dashes' do
     text_to_parse = "SP  - 1140–1152\n"
-    parser.record.should parse(text_to_parse).as({:start_page=>{:contents=>'1140–1152'}})
+    parser.record.should parse(text_to_parse).as({:start_page=>{:contents=>"1140–1152\n"}})
   end
 
   it "should be able to handle names like O'Brien" do
@@ -287,7 +264,7 @@ HERE
 
   it "should be able to deal with brackets" do
     text_to_parse = "SP  - 23. [online] URL: http://www.ecologyandsociety.org/vol15/iss4/art23/\n"
-    parser.record.should parse(text_to_parse).as({:start_page=>{:contents=>"23. [online] URL: http://www.ecologyandsociety.org/vol15/iss4/art23/"}})
+    parser.record.should parse(text_to_parse).as({:start_page=>{:contents=>"23. [online] URL: http://www.ecologyandsociety.org/vol15/iss4/art23/\n"}})
   end
 
   it "should be able to deal with AN tags" do
@@ -465,6 +442,7 @@ robertson@kbs.msu.edu\n"
     should_be_a_valid_record_tag('N1')
     should_be_a_valid_record_tag('KW')
     should_be_a_valid_record_tag('RP')
+    should_be_a_valid_record_tag('SP')
     should_be_a_valid_record_tag('EP')
     should_be_a_valid_record_tag('JF')
     should_be_a_valid_record_tag('JO')
