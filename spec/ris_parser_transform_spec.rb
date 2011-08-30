@@ -161,12 +161,7 @@ HERE
     second_record[:local_id].should == "907"
   end
 
-  it "should be able to deal with an actual file" do
-    result = trans.apply(parser.parse('@import spec/endnote/LTER_pubs.txt'))
-    result.count.should == 930
-  end
-
-  it "should be able to deal with a second file" do
+  it "should be able to deal with a file" do
     parsed_output = parser.parse('@import spec/endnote/LTER.txt')
     result = trans.apply(parsed_output)
     result.count.should == 977

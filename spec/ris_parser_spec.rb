@@ -629,10 +629,7 @@ HERE
 
 
   it 'should parse one actual file' do
-    parser.should parse('@import spec/endnote/LTER_pubs.txt')
-  end
-
-  it 'should parse another actual file' do
     parser.should parse('@import spec/endnote/LTER.txt')
   end
+
 end
